@@ -11,7 +11,6 @@ let board = [
 ];
 let win;
 let numMovimentos = 0;
-let loading = true;
 const endGame = (posX, posY, board, player) => {
   let end = false;
 
@@ -77,7 +76,6 @@ const enterRoom = (socket, id) => {
   else if (!playerO) {
     playerO = id;
     player = playerX;
-    loading = false;
   } else if (id === playerX || id === playerO) return fullRoom(socket);
 
   if (playerX && playerO)
