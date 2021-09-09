@@ -1,6 +1,20 @@
 # tic-tac-toe
 Multiplayer Tic-tac-toe Game using node express and socket.io.
 
+## Start project
+Clone this repository and install all dependencies with npm install and start the project:
+```git
+git clone https://github.com/wueliton/tic-tac-toe.git
+```
+
+```javascript
+npm install
+npm run start
+```
+
+### Project preview
+When you start's the project, open the '/' directory to open html preview.
+
 ## Socket.io events
 List of events emitted and listening for tic-tac-toe game.
 
