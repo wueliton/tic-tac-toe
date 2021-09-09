@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="board">
+    Aguardando bolinha...
+  </div>
+  <div id="message">Faça sua Jogada</div>
+
+  <style>
+    button {
+      height: 40px;
+      width: 40px;
+      background-color: #DDD;
+    }
+
+    button.active {
+      background-color: red;
+    }
+  </style>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io('http://localhost:3001/');
+    let gamerId;
+    let playerX;
+
+    function jogar(e, x, y) {
+      socket.emit('move', {x, y, gamerId});
+    }
+
+    socket.on('message', (id) => {
+      gamerId = id
+    })
+
+    socket.on('startGame', (obj) => {
+      document.getElementById('board').innerHTML = 'Começou';
+      playerX = obj.firstPlayer;
+      drawBoard(obj.board, obj.playerX, obj.playerO);
+    });
+
+    socket.on('nextMove', (obj) => {
+      if(obj.nextPlayer == gamerId) document.getElementById('message').innerHTML="Faça sua jogada";
+      else document.getElementById('message').innerHTML="Aguarde...";
+      drawBoard(obj.board, obj.playerX, obj.playerO);
+    })
+
+    socket.on('endGame', ({playerId, play}) => {
+      if(playerId === gamerId) document.getElementById('message').innerHTML = "Você Ganhou"
+      else document.getElementById('message').innerHTML = "Você Perdeu"
+      
+      document.getElementById('message').innerHTML += '<button onclick="newGame()">Jogar novamente</button>'
+    })
+
+    function newGame() {
+      document.getElementById('message').innerHTML = "";
+      socket.emit('newGame');
+    }
+
+    function drawBoard(board, playerX, playerO) {
+      let boardDraw = '<table>';
+        board.forEach((line, index) => {
+        boardDraw += "<tr>";
+        line.forEach((cell, index1) => {
+          if(playerX && cell === playerX) {
+            boardDraw += `<td class="active"><button>X</button></td>`;
+          } else if(playerO && cell !== 0) {
+            boardDraw += `<td class="otherPlayer"><button>O</button></td>`;
+          } else {
+            boardDraw += `<td><button onclick="jogar(event, ${index}, ${index1})"></button></td>`
+          }
+        })
+
+        boardDraw += "</tr>"
+      })
+
+      board += "</table>"
+
+      document.getElementById('board').innerHTML = boardDraw;
+    }
+  </script>
+</body>
+</html>
