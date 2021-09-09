@@ -1,7 +1,7 @@
 const express = require("express");
 const routes = express.Router();
 
-routes.get("/", (req, res) => {
+routes.get("/web", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
