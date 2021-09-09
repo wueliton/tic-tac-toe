@@ -89,6 +89,8 @@ exports.setupWebSocket = (server) => {
     socket.send(socket.id);
 
     socket.on("move", (position) => {
+      var position =
+        typeof position === "object" ? position : JSON.parse(position);
       posX = position.x;
       posY = position.y;
       if (player !== position.gamerId || win) return;
@@ -130,6 +132,15 @@ exports.setupWebSocket = (server) => {
     socket.on("disconnect", () => {
       if (playerO === socket.id) playerO = null;
       if (playerX === socket.id) playerX = null;
+
+      board = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+      ];
+      numMovimentos = 0;
+      win = null;
+      player = playerX;
     });
   });
 };
