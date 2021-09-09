@@ -47,7 +47,7 @@ If one of the boths players win, the event endGame is emitted with one object:
 { playerId: socket.id, play: array }
 ```
 * playerId: Socket.id of the win user
-* play: The move positionss that guaranteed the victory represented on array board positions
+* play: The move positions that garanted the victory represented on array board positions
 
 #### newGame (listener)
 If the game is ended, the newGame event start's a new game.
