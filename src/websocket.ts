@@ -4,6 +4,7 @@ let io;
 let player;
 let playerX;
 let playerO;
+let firstPlayer;
 let board = [
   [0, 0, 0],
   [0, 0, 0],
@@ -12,7 +13,7 @@ let board = [
 let win;
 let numMovimentos = 0;
 const endGame = (posX, posY, board, player) => {
-  let end = false;
+  let end: any = false;
 
   if (
     board[posX][0] === player &&
@@ -75,14 +76,15 @@ const enterRoom = (socket, id) => {
   if (!playerX) playerX = id;
   else if (!playerO) {
     playerO = id;
+    firstPlayer = playerX;
     player = playerX;
   } else if (id === playerX || id === playerO) return fullRoom(socket);
 
   if (playerX && playerO)
-    io.emit("startGame", { playerX, playerO, board, firstPlayer: playerX });
+    io.emit("startGame", { playerX, playerO, board, firstPlayer });
 };
 
-exports.setupWebSocket = (server) => {
+const setupWebSocket = (server) => {
   io = socketio(server);
   io.on("connection", (socket) => {
     enterRoom(socket, socket.id);
@@ -91,8 +93,8 @@ exports.setupWebSocket = (server) => {
     socket.on("move", (position) => {
       var position =
         typeof position === "object" ? position : JSON.parse(position);
-      posX = position.x;
-      posY = position.y;
+      let posX = position.x;
+      let posY = position.y;
       if (player !== position.gamerId || win) return;
 
       board[posX][posY] = player;
@@ -119,13 +121,14 @@ exports.setupWebSocket = (server) => {
       ];
       numMovimentos = 0;
       win = null;
-      player = playerX;
+      firstPlayer = firstPlayer === playerX ? playerO : playerX;
+      console.log(firstPlayer);
 
       io.emit("startGame", {
         playerX,
         playerO,
         board,
-        firstPlayer: playerX,
+        firstPlayer,
       });
     });
 
@@ -144,3 +147,5 @@ exports.setupWebSocket = (server) => {
     });
   });
 };
+
+export default setupWebSocket;
